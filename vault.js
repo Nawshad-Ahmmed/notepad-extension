@@ -1,4 +1,4 @@
-/* vault.js — encryption at rest for Notepad.
+/* vault.js: encryption at rest for Notepad.
  *
  * Passphrase --PBKDF2-SHA256(600k)--> AES-GCM-256 key --> encrypts the whole
  * notes array as one blob. The passphrase is never stored. The derived key is
@@ -14,7 +14,7 @@ const Vault = (() => {
   const te = new TextEncoder();
   const td = new TextDecoder();
 
-  /* base64 helpers — chunked, so a large note can't blow the call stack */
+  /* base64 helpers: chunked, so a large note can't blow the call stack */
   function b64(buf) {
     const u8 = new Uint8Array(buf);
     let s = '';
@@ -51,7 +51,7 @@ const Vault = (() => {
   }
 
   async function encrypt(key, data) {
-    const iv = rand(12);               // fresh IV every write — never reused
+    const iv = rand(12);               // fresh IV every write: never reused
     const ct = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv }, key, te.encode(JSON.stringify(data)));
     return { iv: b64(iv), ct: b64(ct) };

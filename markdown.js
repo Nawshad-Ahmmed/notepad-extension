@@ -1,4 +1,4 @@
-/* markdown.js — a small, self-contained Markdown renderer.
+/* markdown.js: a small, self-contained Markdown renderer.
  *
  * Security posture: note text is HTML-escaped BEFORE any markup is built, so tags can
  * only ever come from the parser, never from your note. Raw HTML in the source is
@@ -89,7 +89,7 @@ const MD = (() => {
       const h = line.match(/^ {0,3}(#{1,6})\s+(.*?)\s*#*\s*$/);
       if (h) { out.push(`<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`); i++; continue; }
 
-      // blockquote — collected, then rendered recursively
+      // blockquote: collected, then rendered recursively
       if (/^ {0,3}>/.test(line)) {
         const buf = [];
         while (i < to && /^ {0,3}>/.test(lines[i])) buf.push(lines[i++].replace(/^ {0,3}> ?/, ''));
@@ -185,7 +185,7 @@ const MD = (() => {
     return root;
   }
 
-  /* Strip markdown syntax down to readable text — for the note-list preview line. */
+  /* Strip markdown syntax down to readable text: for the note-list preview line. */
   function plain(src) {
     return String(src == null ? '' : src)
       .replace(/```[\s\S]*?```/g, ' ')                 // fenced code

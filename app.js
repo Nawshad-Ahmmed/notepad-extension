@@ -1,4 +1,4 @@
-/* Notepad — popup + side panel share this script. */
+/* Notepad: popup + side panel share this script. */
 
 const KEY = 'notepad';
 const $ = (id) => document.getElementById(id);
@@ -40,7 +40,7 @@ async function load() {
 function persist(immediate = false) {
   clearTimeout(saveTimer);
 
-  // Hard guard: never write while the vault is locked — state.notes is empty
+  // Hard guard: never write while the vault is locked: state.notes is empty
   // then, and a write would overwrite the ciphertext with nothing.
   if (vaultMeta && !vaultKey) return Promise.resolve();
 
@@ -78,7 +78,7 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
     try {
       state.notes = await Vault.decrypt(vaultKey, s.enc);
     } catch {
-      return lockNow(false);                     // stale copy — do not write it back
+      return lockNow(false);                     // stale copy: do not write it back
     }
   } else {
     vaultMeta = null;
@@ -166,7 +166,7 @@ function renderList() {
   if (!items.length) {
     list.innerHTML = `<div class="empty">
       <svg class="icon" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
-      <div>${state.notes.length ? 'No notes match that search.' : 'No notes yet — hit <b>New</b> to start.'}</div>
+      <div>${state.notes.length ? 'No notes match that search.' : 'No notes yet: hit <b>New</b> to start.'}</div>
     </div>`;
     return;
   }
@@ -349,7 +349,7 @@ async function enableEncryption() {
   const r = await askPass({
     title: 'Encrypt your notes',
     hint: 'Your notes get encrypted with AES-GCM using a key derived from this passphrase. '
-        + 'It is never stored anywhere — if you lose it, the notes are gone for good.',
+        + 'It is never stored anywhere: if you lose it, the notes are gone for good.',
     ok: 'Encrypt',
   });
   if (!r) return;
@@ -551,7 +551,7 @@ $('btn-decrypt').addEventListener('click', disableEncryption);
 $('btn-lock').addEventListener('click', lockNow);
 
 $('btn-export-all').addEventListener('click', () => {
-  if (vaultMeta && !confirm('The export file is plain text — anyone who gets it can read every note. Continue?')) return;
+  if (vaultMeta && !confirm('The export file is plain text: anyone who gets it can read every note. Continue?')) return;
   const stamp = new Date().toISOString().slice(0, 10);
   download(`notepad-backup-${stamp}.json`,
     JSON.stringify({ exported: Date.now(), notes: state.notes }, null, 2), 'application/json');
