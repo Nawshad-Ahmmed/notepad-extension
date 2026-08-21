@@ -1,10 +1,10 @@
-# Notepad — Chrome extension
+# Notepad Chrome extension
 
 A small, offline notepad that lives in the toolbar. No accounts, no network, no
 content scripts — notes are stored in `chrome.storage.local` on your machine.
 Optional AES-GCM encryption at rest. Markdown preview. No dependencies.
 
-![Notepad — note list, markdown preview, and the lock screen](screenshots/hero.png)
+![Notepad note list, markdown preview, and the lock screen](screenshots/hero.png)
 
 > **Status:** hobby project, not independently audited. The crypto uses standard
 > WebCrypto primitives and is covered by tests, but it has had no third-party review.
