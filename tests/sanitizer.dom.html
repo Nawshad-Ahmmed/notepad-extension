@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><body><div id="out"></div><div id="log"></div>
+<script src="markdown.js"></script>
+<script>
+// Feed scrub() markup it should never see from render(), to prove the sanitizer
+// is a real second line of defence and not decoration.
+const el = document.getElementById('out');
+const cases = [
+  ['script tag',        '<p>ok</p><script>window.X=1<\/script>'],
+  ['img onerror',       '<p><img src=x onerror="window.X=1"></p>'],
+  ['iframe',            '<iframe src="https://evil.test"></iframe>'],
+  ['handler on allowed tag', '<p onclick="window.X=1">click</p>'],
+  ['javascript: href',  '<a href="javascript:window.X=1">go</a>'],
+  ['style attribute',   '<p style="position:fixed;top:0">x</p>'],
+  ['form + input',      '<form action="https://evil.test"><input name=a></form>'],
+  ['object/embed',      '<object data="x"></object><embed src="y">'],
+];
+const lines = [];
+for (const [name, html] of cases) {
+  el.innerHTML = html;
+  MD.scrub(el);
+  const tags = [...el.querySelectorAll('*')].map(n => n.tagName).join(',') || '(none)';
+  const attrs = [...el.querySelectorAll('*')].flatMap(n => [...n.attributes].map(a => a.name)).join(',') || '(none)';
+  const bad = [...el.querySelectorAll('*')].some(n =>
+    ['SCRIPT','IFRAME','IMG','OBJECT','EMBED','FORM','INPUT','STYLE'].includes(n.tagName) ||
+    [...n.attributes].some(a => /^on/i.test(a.name) || a.name === 'style') ||
+    (n.tagName === 'A' && /^javascript:/i.test(n.getAttribute('href') || '')));
+  lines.push((bad ? 'FAIL  ' : 'PASS  ') + name + '  -> tags[' + tags + '] attrs[' + attrs + ']');
+}
+lines.push('window.X was never set: ' + (window.X === undefined ? 'PASS' : 'FAIL'));
+document.getElementById('log').textContent = lines.join('\n');
+</script>
