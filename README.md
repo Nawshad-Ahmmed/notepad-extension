@@ -1,7 +1,7 @@
 # Notepad Chrome extension
 
 A small, offline notepad that lives in the toolbar. No accounts, no network, no
-content scripts — notes are stored in `chrome.storage.local` on your machine.
+content scripts notes are stored in `chrome.storage.local` on your machine.
 Optional AES-GCM encryption at rest. Markdown preview. No dependencies.
 
 ![Notepad note list, markdown preview, and the lock screen](screenshots/hero.png)
@@ -15,7 +15,7 @@ Optional AES-GCM encryption at rest. Markdown preview. No dependencies.
 | | |
 |---|---|
 | ![Note list](screenshots/list.png) | ![Markdown preview](screenshots/preview.png) |
-| Notes list — pinned first, search across titles and bodies | Markdown preview — `Ctrl+E` toggles |
+| Notes: list pinned first, search across titles and bodies | Markdown preview: `Ctrl+E` toggles |
 | ![Lock screen](screenshots/lock.png) | ![Menu](screenshots/menu.png) |
 | Locked: the key is gone from memory, only ciphertext is on disk | Encryption, export/import, and the side panel |
 
@@ -54,11 +54,11 @@ Dark mode follows the system and can be overridden:
 - Multiple notes, pin to top, search across titles and bodies with match highlighting
 - Light/dark theme (follows the system by default, toggle to override)
 - Copy note, download a single note as `.txt`
-- Export **all** notes to `.json` and import them back (import merges, never overwrites —
+- Export **all** notes to `.json` and import them back (import merges, never overwrites
   colliding IDs are re-issued)
 - Popup and side panel stay in sync live via `chrome.storage.onChanged`
-- **Markdown preview** — see below
-- **Optional encryption at rest** — see below
+- **Markdown preview** see below
+- **Optional encryption at rest** see below
 
 ## Markdown
 
@@ -69,11 +69,11 @@ Supported: headings, **bold**, *italic*, ~~strikethrough~~, `code`, fenced code 
 a language label, links and bare URLs, bullet and numbered lists with nesting, task lists
 (`- [ ]` / `- [x]`), blockquotes, tables with alignment, and horizontal rules.
 
-The renderer is ~190 lines in `markdown.js` with **no dependencies** — nothing is fetched
+The renderer is ~190 lines in `markdown.js` with **no dependencies** nothing is fetched
 from a CDN, so there is no supply chain to trust.
 
 **Why it is written the way it is:** turning note text into HTML is the textbook XSS sink.
-So the text is HTML-escaped *before* any markup is built — tags can only come from the
+So the text is HTML-escaped *before* any markup is built tags can only come from the
 parser, never from your note. Raw HTML in the source is deliberately not passed through.
 Link schemes are allowlisted to `http`, `https` and `mailto`; anything else renders as
 plain text. Then `renderInto()` runs the result through a DOM sanitizer that strips every
@@ -87,7 +87,7 @@ Off by default. Turn it on with **⋮ → Encrypt notes…**.
 
 - Passphrase → **PBKDF2-HMAC-SHA256, 1,200,000 iterations**, random 16-byte salt per vault
   → **AES-GCM-256**. Fresh 12-byte IV on every write.
-- The passphrase is never stored. The GCM auth tag *is* the passphrase check — a wrong
+- The passphrase is never stored. The GCM auth tag *is* the passphrase check a wrong
   passphrase fails to decrypt rather than being compared against anything.
 - The derived key is cached in `chrome.storage.session` (memory only, wiped when Chrome
   exits) so you unlock once per browser session. **Auto-locks after 15 minutes idle**;
@@ -100,10 +100,10 @@ Off by default. Turn it on with **⋮ → Encrypt notes…**.
 | Threat | Protected? |
 |---|---|
 | Someone reads your profile folder / a disk image / a backup | **Yes**, while locked |
-| Another extension or a website reads your notes | **Yes** — Chrome isolates extension storage; this one has no host permissions anyway |
-| Notes leaving your machine | **Yes** — there is no network code at all |
-| Malware running as your user *while unlocked* | **No** — the key is in memory and readable |
-| Someone at your unlocked screen, extension unlocked | **No** — lock it (`Ctrl+L`) |
+| Another extension or a website reads your notes | **Yes** Chrome isolates extension storage; this one has no host permissions anyway |
+| Notes leaving your machine | **Yes** there is no network code at all |
+| Malware running as your user *while unlocked* | **No** the key is in memory and readable |
+| Someone at your unlocked screen, extension unlocked | **No** lock it (`Ctrl+L`) |
 | Forgotten passphrase | **No recovery. The notes are unrecoverable.** |
 
 > **If you had notes before turning encryption on:** `chrome.storage.local` is LevelDB, and
@@ -111,7 +111,7 @@ Off by default. Turn it on with **⋮ → Encrypt notes…**.
 > existing notes does not reliably scrub the earlier plaintext from disk. For anything
 > genuinely sensitive, turn encryption on **first**, then write the notes.
 
-PBKDF2 is used because it is the only KDF WebCrypto ships — Argon2id would be stronger
+PBKDF2 is used because it is the only KDF WebCrypto ships Argon2id would be stronger
 against GPU cracking but needs a WASM dependency. Pick a long passphrase.
 
 ## Tests
@@ -132,11 +132,11 @@ with `chrome.*` and the DOM stubbed; the DOM test uses actual Chromium because a
 
 | File | Role |
 |---|---|
-| `manifest.json` | MV3 manifest — `storage` + `sidePanel` permissions only |
+| `manifest.json` | MV3 manifest `storage` + `sidePanel` permissions only |
 | `popup.html` / `panel.html` | Same UI, two surfaces |
 | `app.js` | All the logic (list, editor, autosave, import/export) |
 | `app.css` | Theme tokens + layout |
-| `vault.js` | WebCrypto vault — PBKDF2 derivation, AES-GCM, session key cache |
+| `vault.js` | WebCrypto vault PBKDF2 derivation, AES-GCM, session key cache |
 | `markdown.js` | Dependency-free Markdown renderer + DOM sanitizer |
 | `background.js` | Service worker; side-panel behaviour on install |
 | `tests/` | Node test suites (exclude from a store build) |
